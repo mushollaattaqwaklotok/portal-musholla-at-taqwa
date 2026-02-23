@@ -7,6 +7,38 @@ from datetime import datetime
 st.set_page_config(page_title="Portal Musholla At Taqwa", layout="wide")
 
 # ==============================
+# 🎨 CUSTOM CSS (BIAR ELEGAN)
+# ==============================
+
+st.markdown("""
+<style>
+.main {
+    background-color: #f5f7f6;
+}
+
+h1, h2, h3 {
+    color: #0f5132;
+}
+
+.stMetric {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+}
+
+.sidebar .sidebar-content {
+    background-color: #0f5132;
+    color: white;
+}
+
+.block-container {
+    padding-top: 2rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ==============================
 # 🔐 KONEKSI GOOGLE SHEET
 # ==============================
 
@@ -44,10 +76,11 @@ def rupiah(x):
     return f"Rp {x:,.0f}".replace(",", ".")
 
 # ==============================
-# 📌 SIDEBAR MENU
+# 📌 SIDEBAR
 # ==============================
 
-st.sidebar.title("🕌 Musholla At Taqwa")
+st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1828/1828884.png", width=80)
+st.sidebar.title("Musholla At Taqwa")
 
 menu = st.sidebar.radio(
     "Navigasi",
@@ -61,31 +94,32 @@ menu = st.sidebar.radio(
 )
 
 # ==============================
-# 🏠 PROFIL MUSHOLLA
+# 🏠 PROFIL
 # ==============================
 
 if menu == "Profil Musholla":
 
-    st.title("📖 Profil Musholla At Taqwa")
+    st.title("🕌 Musholla At Taqwa")
+    st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
 
     st.markdown("""
-    Musholla At Taqwa didirikan sebagai pusat ibadah dan kegiatan keislaman masyarakat.
+    Musholla At Taqwa hadir sebagai pusat ibadah, dakwah, dan kegiatan sosial masyarakat.
     
-    **Alamat:**
-    Jl. Contoh No. 123, Desa Contoh, Kecamatan Contoh, Kabupaten Contoh.
+    📍 **Alamat:**  
+    Dusun Klotok RT.1, Desa Simogirang, Kecamatan Prambon, Kabupaten Sidoarjo.
     
-    **Koordinat Lokasi:**
-    - Latitude: -6.200000
-    - Longitude: 106.816666
+    🌍 **Koordinat:**  
+    Latitude: -7.447522  
+    Longitude: 112.582136
     """)
 
     st.map(pd.DataFrame({
-        "lat": [-6.200000],
-        "lon": [106.816666]
+        "lat": [-7.447522],
+        "lon": [112.582136]
     }))
 
 # ==============================
-# 💰 MANAJEMEN KEUANGAN
+# 💰 KEUANGAN
 # ==============================
 
 elif menu == "Manajemen Keuangan":
@@ -100,14 +134,14 @@ elif menu == "Manajemen Keuangan":
 
     st.divider()
 
-    st.subheader("📥 Data Kas Masuk")
+    st.subheader("📥 Kas Masuk")
     st.dataframe(data_masuk, use_container_width=True)
 
-    st.subheader("📤 Data Kas Keluar")
+    st.subheader("📤 Kas Keluar")
     st.dataframe(data_keluar, use_container_width=True)
 
 # ==============================
-# 📅 JADWAL KEGIATAN
+# 📅 KEGIATAN
 # ==============================
 
 elif menu == "Jadwal Kegiatan":
@@ -117,10 +151,10 @@ elif menu == "Jadwal Kegiatan":
     if not data_kegiatan.empty:
         st.dataframe(data_kegiatan, use_container_width=True)
     else:
-        st.info("Belum ada kegiatan yang tercatat.")
+        st.info("Belum ada kegiatan tercatat.")
 
 # ==============================
-# 👥 STRUKTUR ORGANISASI
+# 👥 STRUKTUR
 # ==============================
 
 elif menu == "Struktur Organisasi / DKM":
@@ -141,7 +175,7 @@ elif menu == "Struktur Organisasi / DKM":
     """)
 
     st.subheader("📜 AD/ART")
-    st.info("Dokumen AD/ART dapat diunggah dalam bentuk PDF ke repositori atau ditampilkan di sini.")
+    st.info("Dokumen AD/ART dapat ditampilkan di sini dalam format PDF.")
 
 # ==============================
 # 📷 DOKUMENTASI
@@ -150,11 +184,7 @@ elif menu == "Struktur Organisasi / DKM":
 elif menu == "Dokumentasi":
 
     st.title("📷 Dokumentasi Kegiatan")
-
-    st.info("Upload foto kegiatan ke folder repository atau integrasikan dengan Google Drive.")
-
-    # Contoh jika mau pakai gambar lokal:
-    # st.image("foto1.jpg", caption="Kegiatan Pengajian")
+    st.info("Dokumentasi foto & video kegiatan akan ditampilkan di sini.")
 
 # ==============================
 # 🕒 FOOTER
@@ -163,4 +193,4 @@ elif menu == "Dokumentasi":
 st.divider()
 now = datetime.now().strftime("%d %B %Y - %H:%M WIB")
 st.caption(f"Terakhir diperbarui: {now}")
-st.caption("Dikelola oleh DKM Musholla At Taqwa")
+st.caption("Dikelola oleh DKM Musholla At Taqwa • Transparansi adalah Amanah")
