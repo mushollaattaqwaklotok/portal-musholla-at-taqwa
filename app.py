@@ -7,14 +7,13 @@ from datetime import datetime
 
 st.set_page_config(page_title="Portal Musholla At Taqwa", layout="wide")
 
-# ==============================
-# 🎨 HIJAU NU THEME + ANIMASI
-# ==============================
+# ======================================================
+# 🎨 THEME HIJAU NU ELEGAN
+# ======================================================
 
 st.markdown("""
 <style>
 
-/* Fade Animation */
 @keyframes fadeIn {
   from {opacity: 0;}
   to {opacity: 1;}
@@ -25,7 +24,6 @@ st.markdown("""
     animation: fadeIn 0.8s ease-in;
 }
 
-/* Header */
 h1, h2, h3 {
     color: #0B6623;
     font-weight: 700;
@@ -56,17 +54,14 @@ h1, h2, h3 {
     padding: 10px;
 }
 
-/* Remove Streamlit Footer */
-footer {
-    visibility: hidden;
-}
+footer {visibility: hidden;}
 
 </style>
 """, unsafe_allow_html=True)
 
-# ==============================
+# ======================================================
 # 🔐 GOOGLE SHEET CONNECTION
-# ==============================
+# ======================================================
 
 scope = [
     "https://spreadsheets.google.com/feeds",
@@ -90,9 +85,9 @@ data_masuk = pd.DataFrame(sheet_masuk.get_all_records())
 data_keluar = pd.DataFrame(sheet_keluar.get_all_records())
 data_kegiatan = pd.DataFrame(sheet_kegiatan.get_all_records())
 
-# ==============================
-# 💰 HITUNG SALDO
-# ==============================
+# ======================================================
+# 💰 PERHITUNGAN SALDO
+# ======================================================
 
 total_masuk = data_masuk["Jumlah"].sum() if not data_masuk.empty else 0
 total_keluar = data_keluar["Jumlah"].sum() if not data_keluar.empty else 0
@@ -101,11 +96,12 @@ saldo = total_masuk - total_keluar
 def rupiah(x):
     return f"Rp {x:,.0f}".replace(",", ".")
 
-# ==============================
+# ======================================================
 # 📌 SIDEBAR
-# ==============================
+# ======================================================
 
-st.sidebar.title("🕌 Musholla At Taqwa")
+st.sidebar.image("logo_nu.png", width=80)
+st.sidebar.title("Musholla At Taqwa")
 
 menu = st.sidebar.radio(
     "Navigasi",
@@ -118,29 +114,33 @@ menu = st.sidebar.radio(
     ],
 )
 
-# ==============================
+# ======================================================
 # 🏠 PROFIL
-# ==============================
+# ======================================================
 
 if menu == "Profil Musholla":
 
-    col_logo1, col_logo2 = st.columns([1,5])
+    col1, col2, col3 = st.columns([1,1,4])
 
-    with col_logo1:
-        st.image("https://upload.wikimedia.org/wikipedia/commons/5/5c/Nahdlatul_Ulama_Logo.svg", width=90)
+    with col1:
+        st.image("logo_nu.png", width=90)
 
-    with col_logo2:
+    with col2:
+        st.image("logo_musholla.png", width=90)
+
+    with col3:
         st.title("🕌 Musholla At Taqwa")
         st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
 
-    st.image("https://images.unsplash.com/photo-1509228468518-180dd4864904", use_container_width=True)
+    st.image("https://images.unsplash.com/photo-1509228468518-180dd4864904",
+             use_container_width=True)
 
     st.markdown("""
     Musholla At Taqwa berdiri sebagai pusat ibadah, dakwah, dan kegiatan sosial masyarakat.
-    
+
     📍 **Alamat:**  
     Jl. Contoh No. 123, Desa Contoh, Kecamatan Contoh.
-    
+
     🌍 **Koordinat:**  
     -6.200000 , 106.816666
     """)
@@ -150,9 +150,9 @@ if menu == "Profil Musholla":
         "lon": [106.816666]
     }))
 
-# ==============================
+# ======================================================
 # 💰 KEUANGAN
-# ==============================
+# ======================================================
 
 elif menu == "Manajemen Keuangan":
 
@@ -165,15 +165,16 @@ elif menu == "Manajemen Keuangan":
 
     st.divider()
 
-    # Grafik Bulanan
+    # Grafik Kas Masuk Bulanan
     if not data_masuk.empty:
         data_masuk["Tanggal"] = pd.to_datetime(data_masuk["Tanggal"])
         data_masuk["Bulan"] = data_masuk["Tanggal"].dt.to_period("M")
-        bulanan_masuk = data_masuk.groupby("Bulan")["Jumlah"].sum()
+        bulanan = data_masuk.groupby("Bulan")["Jumlah"].sum()
 
         plt.figure()
-        bulanan_masuk.plot(kind="bar")
+        bulanan.plot(kind="bar")
         plt.title("Kas Masuk per Bulan")
+        plt.xticks(rotation=45)
         st.pyplot(plt)
 
     st.subheader("📥 Kas Masuk")
@@ -182,9 +183,9 @@ elif menu == "Manajemen Keuangan":
     st.subheader("📤 Kas Keluar")
     st.dataframe(data_keluar, use_container_width=True)
 
-# ==============================
+# ======================================================
 # 📅 KEGIATAN
-# ==============================
+# ======================================================
 
 elif menu == "Jadwal Kegiatan":
 
@@ -195,9 +196,9 @@ elif menu == "Jadwal Kegiatan":
     else:
         st.info("Belum ada kegiatan tercatat.")
 
-# ==============================
+# ======================================================
 # 👥 STRUKTUR
-# ==============================
+# ======================================================
 
 elif menu == "Struktur Organisasi / DKM":
 
@@ -218,20 +219,23 @@ elif menu == "Struktur Organisasi / DKM":
 
     st.info("AD/ART dapat ditambahkan dalam format PDF.")
 
-# ==============================
+# ======================================================
 # 📷 DOKUMENTASI
-# ==============================
+# ======================================================
 
 elif menu == "Dokumentasi":
 
-    st.title("📷 Dokumentasi")
+    st.title("📷 Dokumentasi Kegiatan")
 
-    st.image("https://images.unsplash.com/photo-1584556812952-905ffd0c611a", caption="Kegiatan Pengajian")
-    st.image("https://images.unsplash.com/photo-1591604466107-ec97de577aff", caption="Kegiatan Sosial")
+    st.image("https://images.unsplash.com/photo-1584556812952-905ffd0c611a",
+             caption="Kegiatan Pengajian")
 
-# ==============================
+    st.image("https://images.unsplash.com/photo-1591604466107-ec97de577aff",
+             caption="Kegiatan Sosial")
+
+# ======================================================
 # 🕒 FOOTER
-# ==============================
+# ======================================================
 
 st.divider()
 now = datetime.now().strftime("%d %B %Y - %H:%M WIB")
