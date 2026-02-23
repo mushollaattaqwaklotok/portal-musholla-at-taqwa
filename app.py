@@ -4,10 +4,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
-st.set_page_config(page_title="Portal Transparansi Musholla At Taqwa", layout="wide")
-
-st.title("🕌 Portal Transparansi Musholla At Taqwa")
-st.caption("Sistem Transparansi Keuangan Publik")
+st.set_page_config(page_title="Portal Musholla At Taqwa", layout="wide")
 
 # ==============================
 # 🔐 KONEKSI GOOGLE SHEET
@@ -25,7 +22,6 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(
 client = gspread.authorize(creds)
 
 SPREADSHEET_ID = "1XTX9i9WHtGm6KkOfa01MpJuKYBODZXfH8-Z1FpF6BZo"
-
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
 sheet_masuk = spreadsheet.worksheet("kas_masuk")
@@ -37,7 +33,7 @@ data_keluar = pd.DataFrame(sheet_keluar.get_all_records())
 data_kegiatan = pd.DataFrame(sheet_kegiatan.get_all_records())
 
 # ==============================
-# 💰 HITUNG TOTAL
+# 💰 HITUNG SALDO
 # ==============================
 
 total_masuk = data_masuk["Jumlah"].sum() if not data_masuk.empty else 0
@@ -48,54 +44,123 @@ def rupiah(x):
     return f"Rp {x:,.0f}".replace(",", ".")
 
 # ==============================
-# 📊 RINGKASAN KEUANGAN
+# 📌 SIDEBAR MENU
 # ==============================
 
-st.markdown("## 💰 Ringkasan Keuangan")
+st.sidebar.title("🕌 Musholla At Taqwa")
 
-col1, col2, col3 = st.columns(3)
-
-col1.metric("Total Kas Masuk", rupiah(total_masuk))
-col2.metric("Total Kas Keluar", rupiah(total_keluar))
-col3.metric("Saldo Saat Ini", rupiah(saldo))
-
-st.divider()
+menu = st.sidebar.radio(
+    "Navigasi",
+    [
+        "Profil Musholla",
+        "Manajemen Keuangan",
+        "Jadwal Kegiatan",
+        "Struktur Organisasi / DKM",
+        "Dokumentasi",
+    ],
+)
 
 # ==============================
-# 📥 DATA KAS MASUK
+# 🏠 PROFIL MUSHOLLA
 # ==============================
 
-st.subheader("📥 Data Kas Masuk")
-if not data_masuk.empty:
+if menu == "Profil Musholla":
+
+    st.title("📖 Profil Musholla At Taqwa")
+
+    st.markdown("""
+    Musholla At Taqwa didirikan sebagai pusat ibadah dan kegiatan keislaman masyarakat.
+    
+    **Alamat:**
+    Jl. Contoh No. 123, Desa Contoh, Kecamatan Contoh, Kabupaten Contoh.
+    
+    **Koordinat Lokasi:**
+    - Latitude: -6.200000
+    - Longitude: 106.816666
+    """)
+
+    st.map(pd.DataFrame({
+        "lat": [-6.200000],
+        "lon": [106.816666]
+    }))
+
+# ==============================
+# 💰 MANAJEMEN KEUANGAN
+# ==============================
+
+elif menu == "Manajemen Keuangan":
+
+    st.title("💰 Transparansi Keuangan")
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("Total Kas Masuk", rupiah(total_masuk))
+    col2.metric("Total Kas Keluar", rupiah(total_keluar))
+    col3.metric("Saldo Saat Ini", rupiah(saldo))
+
+    st.divider()
+
+    st.subheader("📥 Data Kas Masuk")
     st.dataframe(data_masuk, use_container_width=True)
-else:
-    st.info("Belum ada data kas masuk.")
 
-# ==============================
-# 📤 DATA KAS KELUAR
-# ==============================
-
-st.subheader("📤 Data Kas Keluar")
-if not data_keluar.empty:
+    st.subheader("📤 Data Kas Keluar")
     st.dataframe(data_keluar, use_container_width=True)
-else:
-    st.info("Belum ada data kas keluar.")
 
 # ==============================
-# 📅 KEGIATAN MUSHOLLA
+# 📅 JADWAL KEGIATAN
 # ==============================
 
-st.subheader("📅 Kegiatan Musholla")
-if not data_kegiatan.empty:
-    st.dataframe(data_kegiatan, use_container_width=True)
-else:
-    st.info("Belum ada data kegiatan.")
+elif menu == "Jadwal Kegiatan":
+
+    st.title("📅 Kegiatan Musholla")
+
+    if not data_kegiatan.empty:
+        st.dataframe(data_kegiatan, use_container_width=True)
+    else:
+        st.info("Belum ada kegiatan yang tercatat.")
+
+# ==============================
+# 👥 STRUKTUR ORGANISASI
+# ==============================
+
+elif menu == "Struktur Organisasi / DKM":
+
+    st.title("👥 Struktur Organisasi DKM")
+
+    st.markdown("""
+    **Ketua DKM:** Ahmad  
+    **Sekretaris:** Budi  
+    **Bendahara 1:** Rahmat  
+    **Bendahara 2:** Siti  
+    
+    ### Seksi:
+    - Dakwah  
+    - Humas  
+    - Pembangunan  
+    - Sosial  
+    """)
+
+    st.subheader("📜 AD/ART")
+    st.info("Dokumen AD/ART dapat diunggah dalam bentuk PDF ke repositori atau ditampilkan di sini.")
+
+# ==============================
+# 📷 DOKUMENTASI
+# ==============================
+
+elif menu == "Dokumentasi":
+
+    st.title("📷 Dokumentasi Kegiatan")
+
+    st.info("Upload foto kegiatan ke folder repository atau integrasikan dengan Google Drive.")
+
+    # Contoh jika mau pakai gambar lokal:
+    # st.image("foto1.jpg", caption="Kegiatan Pengajian")
+
+# ==============================
+# 🕒 FOOTER
+# ==============================
 
 st.divider()
-
-# ==============================
-# 🕒 UPDATE TERAKHIR
-# ==============================
-
 now = datetime.now().strftime("%d %B %Y - %H:%M WIB")
 st.caption(f"Terakhir diperbarui: {now}")
+st.caption("Dikelola oleh DKM Musholla At Taqwa")
