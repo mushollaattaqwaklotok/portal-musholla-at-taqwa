@@ -162,16 +162,18 @@ elif menu == "Struktur Organisasi / DKM":
     st.title("👥 Struktur Organisasi DKM")
 
     st.markdown("""
-    **Ketua DKM:** Ahmad  
-    **Sekretaris:** Budi  
-    **Bendahara 1:** Rahmat  
-    **Bendahara 2:** Siti  
+    **Ketua DKM:** Sunhadi Prayitno, SP.  
+    **Sekretaris:** Atmorejo  
+    **Bendahara 1:** H. Didik Dwi Riyanto, SH.  
+    **Bendahara 2:** Ragil Bayu Prasetyo, SH.  
     
     ### Seksi:
     - Dakwah  
     - Humas  
     - Pembangunan  
-    - Sosial  
+    - Perlengkapan
+    - Keamanan
+    - Kebersihan
     """)
 
     st.subheader("📜 AD/ART")
