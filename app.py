@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Portal Musholla At Taqwa", layout="wide")
 
 # ======================================================
-# 🎨 THEME HIJAU NU ELEGAN
+# 🎨 THEME HIJAU NU CLEAN & ELEGAN
 # ======================================================
 
 st.markdown("""
@@ -20,7 +20,7 @@ st.markdown("""
 }
 
 .main {
-    background-color: #F3F8F4;
+    background-color: #F4F8F4;
     animation: fadeIn 0.8s ease-in;
 }
 
@@ -38,7 +38,7 @@ h1, h2, h3 {
     color: white !important;
 }
 
-/* Metric Card */
+/* Metric Cards */
 [data-testid="stMetric"] {
     background-color: white;
     padding: 25px;
@@ -101,7 +101,7 @@ def rupiah(x):
 # ======================================================
 
 st.sidebar.image("logo_nu.png", width=80)
-st.sidebar.title("Musholla At Taqwa")
+st.sidebar.title("Portal Musholla")
 
 menu = st.sidebar.radio(
     "Navigasi",
@@ -120,20 +120,13 @@ menu = st.sidebar.radio(
 
 if menu == "Profil Musholla":
 
-    col1, col2, col3 = st.columns([1,1,4])
+    st.title("🕌 Musholla At Taqwa")
+    st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
 
-    with col1:
-        st.image("logo_nu.png", width=90)
-
-    with col2:
-        st.image("logo_musholla.png", width=90)
-
-    with col3:
-        st.title("🕌 Musholla At Taqwa")
-        st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
-
-    st.image("https://images.unsplash.com/photo-1509228468518-180dd4864904",
-             use_container_width=True)
+    st.image(
+        "https://images.unsplash.com/photo-1509228468518-180dd4864904",
+        use_container_width=True,
+    )
 
     st.markdown("""
     Musholla At Taqwa berdiri sebagai pusat ibadah, dakwah, dan kegiatan sosial masyarakat.
@@ -165,7 +158,6 @@ elif menu == "Manajemen Keuangan":
 
     st.divider()
 
-    # Grafik Kas Masuk Bulanan
     if not data_masuk.empty:
         data_masuk["Tanggal"] = pd.to_datetime(data_masuk["Tanggal"])
         data_masuk["Bulan"] = data_masuk["Tanggal"].dt.to_period("M")
@@ -227,11 +219,17 @@ elif menu == "Dokumentasi":
 
     st.title("📷 Dokumentasi Kegiatan")
 
-    st.image("https://images.unsplash.com/photo-1584556812952-905ffd0c611a",
-             caption="Kegiatan Pengajian")
+    st.image(
+        "https://images.unsplash.com/photo-1584556812952-905ffd0c611a",
+        caption="Kegiatan Pengajian",
+        use_container_width=True
+    )
 
-    st.image("https://images.unsplash.com/photo-1591604466107-ec97de577aff",
-             caption="Kegiatan Sosial")
+    st.image(
+        "https://images.unsplash.com/photo-1591604466107-ec97de577aff",
+        caption="Kegiatan Sosial",
+        use_container_width=True
+    )
 
 # ======================================================
 # 🕒 FOOTER
