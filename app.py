@@ -1,45 +1,71 @@
 import streamlit as st
 import pandas as pd
 import gspread
+import matplotlib.pyplot as plt
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
 st.set_page_config(page_title="Portal Musholla At Taqwa", layout="wide")
 
 # ==============================
-# 🎨 CUSTOM CSS (BIAR ELEGAN)
+# 🎨 HIJAU NU THEME + ANIMASI
 # ==============================
 
 st.markdown("""
 <style>
+
+/* Fade Animation */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
 .main {
-    background-color: #f5f7f6;
+    background-color: #F3F8F4;
+    animation: fadeIn 0.8s ease-in;
 }
 
+/* Header */
 h1, h2, h3 {
-    color: #0f5132;
+    color: #0B6623;
+    font-weight: 700;
 }
 
-.stMetric {
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #0B6623;
+}
+
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* Metric Card */
+[data-testid="stMetric"] {
     background-color: white;
-    padding: 20px;
+    padding: 25px;
+    border-radius: 18px;
+    border-left: 6px solid #1B8A3C;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.05);
+}
+
+/* Dataframe */
+[data-testid="stDataFrame"] {
+    background-color: white;
     border-radius: 15px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+    padding: 10px;
 }
 
-.sidebar .sidebar-content {
-    background-color: #0f5132;
-    color: white;
+/* Remove Streamlit Footer */
+footer {
+    visibility: hidden;
 }
 
-.block-container {
-    padding-top: 2rem;
-}
 </style>
 """, unsafe_allow_html=True)
 
 # ==============================
-# 🔐 KONEKSI GOOGLE SHEET
+# 🔐 GOOGLE SHEET CONNECTION
 # ==============================
 
 scope = [
@@ -79,8 +105,7 @@ def rupiah(x):
 # 📌 SIDEBAR
 # ==============================
 
-st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1828/1828884.png", width=80)
-st.sidebar.title("Musholla At Taqwa")
+st.sidebar.title("🕌 Musholla At Taqwa")
 
 menu = st.sidebar.radio(
     "Navigasi",
@@ -99,23 +124,30 @@ menu = st.sidebar.radio(
 
 if menu == "Profil Musholla":
 
-    st.title("🕌 Musholla At Taqwa")
-    st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
+    col_logo1, col_logo2 = st.columns([1,5])
+
+    with col_logo1:
+        st.image("https://upload.wikimedia.org/wikipedia/commons/5/5c/Nahdlatul_Ulama_Logo.svg", width=90)
+
+    with col_logo2:
+        st.title("🕌 Musholla At Taqwa")
+        st.subheader("Pusat Ibadah & Kegiatan Keislaman Masyarakat")
+
+    st.image("https://images.unsplash.com/photo-1509228468518-180dd4864904", use_container_width=True)
 
     st.markdown("""
-    Musholla At Taqwa hadir sebagai pusat ibadah, dakwah, dan kegiatan sosial masyarakat.
+    Musholla At Taqwa berdiri sebagai pusat ibadah, dakwah, dan kegiatan sosial masyarakat.
     
     📍 **Alamat:**  
-    Dusun Klotok RT.1, Desa Simogirang, Kecamatan Prambon, Kabupaten Sidoarjo.
+    Jl. Contoh No. 123, Desa Contoh, Kecamatan Contoh.
     
     🌍 **Koordinat:**  
-    Latitude: -7.447522  
-    Longitude: 112.582136
+    -6.200000 , 106.816666
     """)
 
     st.map(pd.DataFrame({
-        "lat": [-7.447522],
-        "lon": [112.582136]
+        "lat": [-6.200000],
+        "lon": [106.816666]
     }))
 
 # ==============================
@@ -127,12 +159,22 @@ elif menu == "Manajemen Keuangan":
     st.title("💰 Transparansi Keuangan")
 
     col1, col2, col3 = st.columns(3)
-
     col1.metric("Total Kas Masuk", rupiah(total_masuk))
     col2.metric("Total Kas Keluar", rupiah(total_keluar))
     col3.metric("Saldo Saat Ini", rupiah(saldo))
 
     st.divider()
+
+    # Grafik Bulanan
+    if not data_masuk.empty:
+        data_masuk["Tanggal"] = pd.to_datetime(data_masuk["Tanggal"])
+        data_masuk["Bulan"] = data_masuk["Tanggal"].dt.to_period("M")
+        bulanan_masuk = data_masuk.groupby("Bulan")["Jumlah"].sum()
+
+        plt.figure()
+        bulanan_masuk.plot(kind="bar")
+        plt.title("Kas Masuk per Bulan")
+        st.pyplot(plt)
 
     st.subheader("📥 Kas Masuk")
     st.dataframe(data_masuk, use_container_width=True)
@@ -146,7 +188,7 @@ elif menu == "Manajemen Keuangan":
 
 elif menu == "Jadwal Kegiatan":
 
-    st.title("📅 Kegiatan Musholla")
+    st.title("📅 Jadwal Kegiatan")
 
     if not data_kegiatan.empty:
         st.dataframe(data_kegiatan, use_container_width=True)
@@ -162,22 +204,19 @@ elif menu == "Struktur Organisasi / DKM":
     st.title("👥 Struktur Organisasi DKM")
 
     st.markdown("""
-    **Ketua DKM:** Sunhadi Prayitno, SP.  
-    **Sekretaris:** Atmorejo  
-    **Bendahara 1:** H. Didik Dwi Riyanto, SH.  
-    **Bendahara 2:** Ragil Bayu Prasetyo, SH.  
-    
+    **Ketua DKM:** Ahmad  
+    **Sekretaris:** Budi  
+    **Bendahara 1:** Rahmat  
+    **Bendahara 2:** Siti  
+
     ### Seksi:
     - Dakwah  
     - Humas  
     - Pembangunan  
-    - Perlengkapan
-    - Keamanan
-    - Kebersihan
+    - Sosial  
     """)
 
-    st.subheader("📜 AD/ART")
-    st.info("Dokumen AD/ART dapat ditampilkan di sini dalam format PDF.")
+    st.info("AD/ART dapat ditambahkan dalam format PDF.")
 
 # ==============================
 # 📷 DOKUMENTASI
@@ -185,8 +224,10 @@ elif menu == "Struktur Organisasi / DKM":
 
 elif menu == "Dokumentasi":
 
-    st.title("📷 Dokumentasi Kegiatan")
-    st.info("Dokumentasi foto & video kegiatan akan ditampilkan di sini.")
+    st.title("📷 Dokumentasi")
+
+    st.image("https://images.unsplash.com/photo-1584556812952-905ffd0c611a", caption="Kegiatan Pengajian")
+    st.image("https://images.unsplash.com/photo-1591604466107-ec97de577aff", caption="Kegiatan Sosial")
 
 # ==============================
 # 🕒 FOOTER
